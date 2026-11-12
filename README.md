@@ -1,72 +1,174 @@
- <!-- HEAD
-# Medical_Image_Enhancer
+# Medical Image Enhancer using Verilog HDL
 
-# Medical Image Enhancer - Verilog end-to-end simulation project
+## Overview
 
-Pipeline (same as the workflow slide):
+**Medical Image Enhancer** is a hardware-oriented digital image processing project implemented using **Verilog HDL**. The project focuses on improving the visual quality of medical images through different image enhancement and noise-removal techniques.
 
-    input_image.txt (noisy MRI, 6 % salt & pepper)
-        -> salt_pepper_removal  (3x3 median)      -> output_filtered.txt
-              -> image_enhancer          (contrast stretching)  -> output_contrast.txt
-              -> image_enhancer_advanced (histogram equalisation / threshold)
-                                                    -> output_histeq.txt, output_threshold.txt, output_thr_histeq.txt
+The system implements multiple image processing operations at the RTL level, including filtering, contrast enhancement, histogram equalization, thresholding, and salt-and-pepper noise removal.
 
-## Folder layout
-| Folder / file | Purpose |
+The project explores how image enhancement algorithms can be implemented using digital hardware for efficient image processing applications.
+
+## Objectives
+
+- Improve the visual quality and contrast of medical images.
+- Reduce noise and unwanted pixel variations.
+- Implement image processing algorithms using Verilog HDL.
+- Design modular and reusable RTL components.
+- Verify functionality through simulation and output analysis.
+
+## Image Processing Techniques
+
+### 1. Contrast Enhancement
+Enhances image visibility by improving the intensity distribution of pixels, making important structures more distinguishable.
+
+### 2. Histogram Equalization
+Improves image contrast by redistributing pixel intensity values using histogram-based processing.
+
+### 3. Thresholding
+Separates image regions based on pixel intensity values to generate enhanced binary representations.
+
+### 4. Salt-and-Pepper Noise Removal
+Implements a **3×3 Median Filter** to remove salt-and-pepper noise while preserving important image details.
+
+The median filter replaces the center pixel with the median of the nine neighboring pixel values.
+
+### 5. Advanced Image Enhancement
+Includes an advanced RTL implementation that brings image enhancement operations together for simulation and analysis.
+
+## Hardware Architecture
+
+The project is organized into modular Verilog designs:
+
+| Module | Description |
 |---|---|
-| `Source_Code/` | The 3 modules + 3 testbenches (your code, with bug fixes - see below) |
-| `sim/` | Simulation working folder. `input_image.txt` (256x256 hex, one pixel per line) is already here; ISim writes the `output_*.txt` files here |
-| `isim/` | `.prj` project files and `.tcl` waveform scripts for ISim |
-| `python/` | `generate_inputs.py` (make a new noisy image), `golden_model.py` (software reference), `compare_and_view.py` (check results + make PNGs) |
-| `expected/` | What the correct outputs look like (hex + PNG + `workflow_expected.png`) |
-| `run_isim.bat` / `run_isim.sh` | One-command run (compile + simulate all 3 stages + compare) |
-| `run_iverilog.sh` | Same flow with free Icarus Verilog, optional |
+| `image_enhancer.v` | RTL implementation of image enhancement operations |
+| `image_enhancer_advanced.v` | Advanced image enhancement implementation |
+| `salt_pepper_removal.v` | Salt-and-pepper noise removal using median filtering |
+| `tb_image_enhancer.v` | Testbench for image enhancer |
+| `tb_image_enhancer_advanced.v` | Testbench for advanced image enhancer |
+| `tb_salt_pepper_removal.v` | Testbench for noise removal |
 
-## Running in ISim (Xilinx ISE 14.x)
+## Repository Structure
 
-### Option A - one command
-1. Start **ISE Design Suite Command Prompt** (Start menu -> Xilinx ISE Design Suite 14.x -> Accessories). This puts `fuse` on the PATH.
-2. `cd` into this folder, then
-   * `run_isim.bat`        -> opens the ISim waveform window for each of the 3 stages (like your ALU screenshot), one after the other; close a window to go to the next stage.
-   * `run_isim.bat batch`  -> no GUI, fastest.
-3. At the end `python python\compare_and_view.py` runs automatically (needs Python with numpy + pillow) and prints PASS/FAIL per file and writes `results\workflow.png`.
-
-### Option B - manually (what the script does)
+```text
+Medical_Image_Enhancer_Sim/
+│
+├── Source_Code/
+│   ├── image_enhancer.v
+│   ├── image_enhancer_advanced.v
+│   ├── salt_pepper_removal.v
+│   ├── tb_image_enhancer.v
+│   ├── tb_image_enhancer_advanced.v
+│   └── tb_salt_pepper_removal.v
+│
+├── sim/
+│   ├── input_image.png
+│   ├── input_image.txt
+│   ├── reference_clean_dim.png
+│   ├── output_contrast.txt
+│   ├── output_filtered.txt
+│   ├── output_histeq.txt
+│   ├── output_thr_histeq.txt
+│   ├── output_threshold.txt
+│   ├── image_enhancer.vcd
+│   ├── image_enhancer_advanced.vcd
+│   └── salt_pepper_removal.vcd
+│
+├── results/
+│
+├── .gitignore
+├── README.md
+├── run_isim.bat
+├── run_isim.sh
+└── run_iverilog.sh
 ```
-cd sim
-fuse work.tb_salt_pepper_removal -prj ../isim/tb_salt_pepper_removal.prj -o tb_salt_pepper_removal.exe
-tb_salt_pepper_removal.exe -gui -tclbatch ../isim/wave_salt_pepper.tcl
 
-fuse work.tb_image_enhancer -prj ../isim/tb_image_enhancer.prj -o tb_image_enhancer.exe
-tb_image_enhancer.exe -gui -tclbatch ../isim/wave_contrast.tcl
+## Technologies and Tools
 
-fuse work.tb_image_enhancer_advanced -prj ../isim/tb_image_enhancer_advanced.prj -o tb_image_enhancer_advanced.exe
-tb_image_enhancer_advanced.exe -gui -tclbatch ../isim/wave_advanced.tcl
+- **Verilog HDL** – RTL design and hardware implementation.
+- **Icarus Verilog** – Verilog compilation and simulation.
+- **GTKWave** – Waveform visualization.
+- **VCD (Value Change Dump)** – Simulation waveform analysis.
+- **Digital Image Processing** – Image filtering and enhancement techniques.
+
+## Simulation and Verification
+
+The project uses dedicated Verilog testbenches to verify the functionality of individual image processing modules.
+
+Simulation involves:
+
+1. Loading the input image pixel data.
+2. Applying the corresponding image processing operation.
+3. Processing pixel values through the RTL modules.
+4. Generating enhanced output pixel data.
+5. Observing signal transitions and module behavior through waveform analysis.
+
+The simulation outputs are stored in text files, while waveform files (`.vcd`) can be used to inspect the internal signal activity.
+
+## How to Run
+
+### Using Icarus Verilog
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/KusumLata930/Medical_Image_Enhancer.git
 ```
-**Order matters**: stage 1 must run first, because stages 2 and 3 read `output_filtered.txt`.
 
-### Option C - inside the ISE Project Navigator GUI
-1. File -> New Project, add all 6 `.v` files from `Source_Code/`.
-2. Copy `sim/input_image.txt` into the project's working folder (the folder containing the `.xise` file, or ISim's `isim` subfolder - wherever ISim runs). Simplest: set the project location to this `sim/` folder.
-3. View -> Simulation, select one testbench (e.g. `tb_salt_pepper_removal`), then Process "Simulate Behavioral Model".
-4. In the ISim window drag `clk, rst, start, done, filtered_valid, filtered_pixel, pixel_addr, dut_state, dut_counter` into the waveform, type `run all` in the console (or press Run All). Zoom with "Zoom to Full View".
+2. Navigate to the project directory:
 
-### Getting a waveform that looks like your ALU figure
-A 256x256 image takes about 1.3 ms of simulated time, so the full waveform is dense. For a readable screenshot either zoom into the first ~2 us after `start`, or make a small image:
+```bash
+cd Medical_Image_Enhancer
 ```
-python python/generate_inputs.py --size 32
+
+3. Run the provided simulation script:
+
+```bash
+bash run_iverilog.sh
 ```
-and change `parameter WIDTH = 256; HEIGHT = 256;` to 32 in all three testbenches (only the testbenches need editing), then re-run `python python/golden_model.py`.
 
-## What was changed in your code
-* **salt_pepper_removal.v**: at row/column 0 the old `get_pixel(r-1, ...)` on a 17-bit unsigned value wrapped to 131071, which the `>= HEIGHT` test clamped to the *last* row, so the top/left border took its neighbours from the opposite edge of the image instead of replicating the edge. Now uses signed integers so the border is replicated correctly. `row`/`col` are plain integers driven only by blocking assignments, and the median is stored with `output_image[pixel_counter] <= median`.
-* **image_enhancer.v**: arithmetic registers widened to 32 bits, and `current_pixel`/`denominator` are now only used as blocking temporaries; no behavioural change for normal images.
-* **image_enhancer_advanced.v**: `cdf_min` was found with a non-blocking assignment inside a loop, so every non-zero CDF entry "won" in turn and the last one (the total pixel count) ended up as `cdf_min`, which breaks equalisation. It is now the first non-zero CDF entry, computed with blocking temporaries. Mode 01 / 10 input selection simplified (`use_temp`).
-* **Testbenches**: the two enhancer testbenches now read `output_filtered.txt` (the cleaned image) so the pipeline matches your slide; the advanced testbench runs three modes; `$dumpvars` limited to top level; internal state/counter/min/max exposed as `dut_*` wires for the waveform window; `%0d` formats.
-* `$fscanf` format changed from `"%h\n"` to `"%h"` (whitespace is skipped automatically).
+### Using Xilinx ISim
 
-## Notes
-* Output pixel format everywhere: one 2-digit hex value per line, row-major, 256x256 = 65536 lines.
-* Use your own image: `python python/generate_inputs.py --source my_scan.png --size 256`.
-* The RTL is written in a behavioural/testbench style (file I/O, loops, tasks), so it is for simulation, not synthesis.
- 554efbe (Initial commit: Medical Image Enhancer) -->
+On Windows, execute:
+
+```powershell
+.\run_isim.bat
+```
+
+On Linux:
+
+```bash
+bash run_isim.sh
+```
+
+*Note: The simulation scripts require the corresponding simulator to be installed and configured in your system.*
+
+## Applications
+
+- Medical image preprocessing.
+- Image denoising and quality enhancement.
+- Digital image processing hardware.
+- FPGA-based image processing systems.
+- Hardware acceleration of image enhancement algorithms.
+
+## Future Scope
+
+- FPGA implementation and hardware testing.
+- Optimization of RTL architecture for reduced hardware resource utilization.
+- Real-time medical image processing.
+- Pipeline-based processing for improved throughput.
+- Integration of additional image enhancement algorithms.
+
+## Author
+
+**Kusum Lata**
+
+B.Tech – Electronics and Communication Engineering (IIoT)  
+National Institute of Technology, Kurukshetra
+
+- GitHub: [KusumLata930](https://github.com/KusumLata930)
+- Project Repository: [Medical_Image_Enhancer](https://github.com/KusumLata930/Medical_Image_Enhancer)
+
+---
+
+*This project demonstrates the application of digital image processing concepts through modular RTL design and Verilog-based simulation.*
