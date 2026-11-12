@@ -171,4 +171,3 @@ National Institute of Technology, Kurukshetra
 
 ---
 
-*This project demonstrates the application of digital image processing concepts through modular RTL design and Verilog-based simulation.*
