@@ -1,0 +1,2 @@
+verilog work "../Source_Code/image_enhancer_advanced.v"
+verilog work "../Source_Code/tb_image_enhancer_advanced.v"

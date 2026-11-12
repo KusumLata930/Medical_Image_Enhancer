@@ -1,0 +1,2 @@
+verilog work "../Source_Code/salt_pepper_removal.v"
+verilog work "../Source_Code/tb_salt_pepper_removal.v"

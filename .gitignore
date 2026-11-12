@@ -1,0 +1,13 @@
+
+# Compiled Verilog simulation files
+*.vvp
+
+# Generated waveform files
+*.vcd
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Temporary files
+*.tmp
